@@ -3,6 +3,7 @@ package com.backend.travel.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -73,5 +74,31 @@ public class DestinationService {
 
         }
         return destinationResults;
+    }
+
+    public List<DestinationResult> getDestinationsByContinentId(Integer continendId) {
+
+        List<Destination> destinations = destinationRepository.findByContinentId(continendId);
+
+        List<DestinationResult> destinationResults = destinations.stream().map(this::mapToDestinationResult)
+                .collect(Collectors.toList());
+
+        return destinationResults;
+
+    }
+
+    private DestinationResult mapToDestinationResult(Destination destination) {
+        DestinationResult result = new DestinationResult();
+        result.setId(destination.getId());
+        result.setContinentId(destination.getContinent().getId());
+        result.setPeople(destination.getPeople());
+        result.setCountry(destination.getCountry());
+        result.setCity(destination.getCity());
+        result.setLeavingDate(destination.getLeavingDate());
+        result.setReturningDate(destination.getReturningDate());
+        result.setDescription(destination.getDescription());
+        result.setCreatedBy(destination.getCreatedBy());
+        result.setImageUrl(destination.getImageUrl());
+        return result;
     }
 }

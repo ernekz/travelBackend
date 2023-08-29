@@ -3,6 +3,7 @@ package com.backend.travel.controller;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,10 +27,10 @@ public class DestinationController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createDestination(
+    public Boolean createDestination(
             @RequestBody DestinationRequest destinationRequest) {
         destinationService.createDestination(destinationRequest);
-        return "Destination has been created";
+        return true;
     }
 
     @GetMapping("/get/{id}")
@@ -41,6 +42,13 @@ public class DestinationController {
     @GetMapping("/getAll")
     public List<DestinationResult> getAllDestinations() {
         return destinationService.getAllDestinations();
+    }
+
+    @GetMapping("/getByContinent/{continentId}")
+    public ResponseEntity<List<DestinationResult>> getDestinationByContinent(@PathVariable Integer continentId) {
+        List<DestinationResult> destinationResults = destinationService.getDestinationsByContinentId(continentId);
+
+        return ResponseEntity.ok(destinationResults);
     }
 
 }
