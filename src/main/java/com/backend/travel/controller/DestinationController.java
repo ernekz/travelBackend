@@ -2,8 +2,11 @@ package com.backend.travel.controller;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,11 +28,16 @@ public class DestinationController {
 
     private final DestinationService destinationService;
 
+    @Autowired
+    private KafkaTemplate<String, DestinationRequest> kafkaTemplate;
+
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Boolean createDestination(
             @RequestBody DestinationRequest destinationRequest) {
         destinationService.createDestination(destinationRequest);
+
+        kafkaTemplate.send("new-destination", destinationRequest.getCountry(), destinationRequest);
         return true;
     }
 
